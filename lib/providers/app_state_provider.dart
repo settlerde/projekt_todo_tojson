@@ -13,7 +13,9 @@ class AppStateNotifier extends Notifier<AppState> {
   @override
   AppState build() {
     //entry point for notifier, called when provider is first accessed.
-    Future.microtask(() => loadState());
+    Future.microtask(
+      () => loadState(),
+    ); // a way to trigger an asynchronous load at startup without blocking the UI.
     return AppState();
   }
 
@@ -112,7 +114,25 @@ class AppStateNotifier extends Notifier<AppState> {
   }
 }
 
+/// This provider allows widgets to access and modify the app state through the AppStateNotifier.
+// Notifier listens to changes in AppState and notifies any widgets that are subscribed to it.
 final appStateProvider = NotifierProvider<AppStateNotifier, AppState>(
   AppStateNotifier
       .new, // Tells Riverpod: "When a provider is needed, create an AppStateNotifier."
 );
+// Derived providers
+final todosProvider = Provider<List<Todo>>((ref) {
+  return ref.watch(appStateProvider).todos;
+});
+
+final isDarkModeProvider = Provider<bool>((ref) {
+  return ref.watch(appStateProvider).isDarkMode;
+});
+
+final selectedTodosProvider = Provider<Set<String>>((ref) {
+  return ref.watch(appStateProvider).selectedTodoIds;
+});
+
+final hasSelectedTodosProvider = Provider<bool>((ref) {
+  return ref.watch(selectedTodosProvider).isNotEmpty;
+});

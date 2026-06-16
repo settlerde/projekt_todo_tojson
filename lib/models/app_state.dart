@@ -1,9 +1,9 @@
 import 'package:projekt_todo_tojson/models/todo.dart';
 
 /// This class is State Management of the App,
-// it holds the state of the app, includs the list of todos,
-// the theme mode, and the delition confirmation setting.
-// It also provides methods to create a copy of the state with modified properties (copyWith).
+/// it holds the state of the app, includs the list of todos,
+/// the theme mode, and the delition confirmation setting.
+/// It also provides methods to create a copy of the state with modified properties (copyWith).
 class AppState {
   final List<Todo> todos;
   final bool isDarkMode;

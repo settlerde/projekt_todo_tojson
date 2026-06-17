@@ -2,12 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:projekt_todo_tojson/models/app_state.dart';
 import 'package:projekt_todo_tojson/models/todo.dart';
 import 'package:projekt_todo_tojson/services/storage_service.dart';
+import 'package:projekt_todo_tojson/providers/app_state_notifier_interface.dart';
 
 /// this class is responsible for managing the state of the app.
 /// Its primary task is to respond to user actions (such as button presses or text input),
 /// modify data within AppState, and automatically save it to the device.
 
-class AppStateNotifier extends Notifier<AppState> {
+class AppStateNotifier extends AppStateNotifierInterface {
   final _storageService = StorageService();
 
   @override
@@ -20,6 +21,7 @@ class AppStateNotifier extends Notifier<AppState> {
   }
 
   // Load state from storage
+  @override
   Future<void> loadState() async {
     try {
       final appState = await _storageService.loadAppState();
@@ -33,6 +35,7 @@ class AppStateNotifier extends Notifier<AppState> {
   }
 
   // Save state to storage
+  @override
   Future<void> saveState() async {
     try {
       await _storageService.saveAppState(state);
@@ -42,12 +45,14 @@ class AppStateNotifier extends Notifier<AppState> {
   }
 
   // Add a new todo
+  @override
   void addTodo(String text) {
     if (text.trim().isEmpty) return;
 
     final newTodo = Todo(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       text: text.trim(),
+      isCompleted: false,
     );
 
     state = state.copyWith(todos: [...state.todos, newTodo]);
@@ -56,6 +61,7 @@ class AppStateNotifier extends Notifier<AppState> {
   }
 
   // Toggle todo completion status
+  @override
   void toggleTodo(String id) {
     state = state.copyWith(
       todos: state.todos.map((todo) {
@@ -70,6 +76,7 @@ class AppStateNotifier extends Notifier<AppState> {
   }
 
   // Toggle todo selection
+  @override
   void toggleSelection(String id) {
     final selectedIds = Set<String>.from(state.selectedTodoIds);
     if (selectedIds.contains(id)) {
@@ -82,11 +89,13 @@ class AppStateNotifier extends Notifier<AppState> {
   }
 
   // Clear all selections
+  @override
   void clearSelection() {
     state = state.copyWith(selectedTodoIds: {});
   }
 
   // Delete selected todos
+  @override
   Future<void> deleteSelectedTodos() async {
     if (state.selectedTodoIds.isEmpty) return;
 
@@ -100,12 +109,14 @@ class AppStateNotifier extends Notifier<AppState> {
   }
 
   // Toggle dark mode
+  @override
   void toggleDarkMode() {
     state = state.copyWith(isDarkMode: !state.isDarkMode);
     saveState();
   }
 
   // Toggle deletion confirmation
+  @override
   void toggleDeletionConfirmation() {
     state = state.copyWith(
       asksForDeletionConfirmation: !state.asksForDeletionConfirmation,
@@ -116,10 +127,10 @@ class AppStateNotifier extends Notifier<AppState> {
 
 /// This provider allows widgets to access and modify the app state through the AppStateNotifier.
 // Notifier listens to changes in AppState and notifies any widgets that are subscribed to it.
-final appStateProvider = NotifierProvider<AppStateNotifier, AppState>(
-  AppStateNotifier
-      .new, // Tells Riverpod: "When a provider is needed, create an AppStateNotifier."
-);
+final appStateProvider = NotifierProvider<AppStateNotifierInterface, AppState>(
+  () => AppStateNotifier(),
+); // Tells Riverpod: "When a provider is needed, create an AppStateNotifier."
+
 // Derived providers
 final todosProvider = Provider<List<Todo>>((ref) {
   return ref.watch(appStateProvider).todos;

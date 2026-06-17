@@ -12,9 +12,16 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode = ref.watch(isDarkModeProvider);
+    final isDarkMode = ref.watch(
+      appStateProvider.select((state) => state.isDarkMode),
+    );
     return MaterialApp(
-      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
+      title: 'TODO APP',
+
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+
       home: const TodoListScreen(),
     );
   }

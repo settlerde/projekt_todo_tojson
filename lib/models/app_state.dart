@@ -1,4 +1,5 @@
 import 'package:projekt_todo_tojson/models/todo.dart';
+import 'package:collection/collection.dart';
 
 /// This class is State Management of the App,
 /// it holds the state of the app, includs the list of todos,
@@ -51,6 +52,41 @@ class AppState {
           .toList(),
       isDarkMode: json['isDarkMode'] ?? false,
       asksForDeletionConfirmation: json['asksForDeletionConfirmation'] ?? true,
+    );
+  }
+  @override
+  bool operator ==(Object other) {
+    // Structural Guard: Immediately return true if instances point to the exact same memory reference.
+    if (identical(this, other)) return true;
+
+    // Type Guard: Return false if the comparison object is null or built from a mismatching runtime type.
+    return other is AppState &&
+        // Deep-compare list collections recursively utilizing deep-element comparison mechanics.
+        const ListEquality<Todo>().equals(other.todos, todos) &&
+        // Shallow-compare primitive types.
+        other.isDarkMode == isDarkMode &&
+        other.asksForDeletionConfirmation == asksForDeletionConfirmation &&
+        // Deep-compare set collections utilizing hashed element validation mechanics.
+        const SetEquality<String>().equals(
+          other.selectedTodoIds,
+          selectedTodoIds,
+        );
+  }
+
+  /// Hash code generator tracking value allocations recursively.
+  ///
+  /// State verification layer: Generates a combined state map fingerprint.
+  /// Combines deep-collection hash metrics with primitive value hash references
+  /// to ensure immutable caching mechanisms function with zero collision margins.
+  @override
+  int get hashCode {
+    return Object.hash(
+      // Compute the deep hash map of the nested list elements.
+      const ListEquality<Todo>().hash(todos),
+      isDarkMode,
+      asksForDeletionConfirmation,
+      // Compute the deep hash map of the nested set elements.
+      const SetEquality<String>().hash(selectedTodoIds),
     );
   }
 }

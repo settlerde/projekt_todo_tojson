@@ -6,6 +6,18 @@ class Todo {
 
   Todo({required this.id, required this.text, this.isCompleted = false});
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Todo &&
+        other.id == id &&
+        other.text == text &&
+        other.isCompleted == isCompleted;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, text, isCompleted);
+
   // Create a copy with modified properties
   // This useful for immutability and state management, that creates a new instance of Todo with updated values,
   // without modifying original instance.

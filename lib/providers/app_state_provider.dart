@@ -3,6 +3,16 @@ import 'package:projekt_todo_tojson/models/app_state.dart';
 import 'package:projekt_todo_tojson/models/todo.dart';
 import 'package:projekt_todo_tojson/services/storage_service.dart';
 import 'package:projekt_todo_tojson/providers/app_state_notifier_interface.dart';
+import 'package:projekt_todo_tojson/providers/database_notifier.dart';
+
+/// This provider allows widgets to access and modify the app state through the AppStateNotifier.
+// Notifier listens to changes in AppState and notifies any widgets that are subscribed to it.
+//final appStateProvider = NotifierProvider<AppStateNotifierInterface, AppState>(
+//  () => AppStateNotifier(),
+// ); // Tells Riverpod: "When a provider is needed, create an AppStateNotifier."
+final appStateProvider = NotifierProvider<AppStateNotifierInterface, AppState>(
+  () => DatabaseNotifier(), // SQLite
+);
 
 /// this class is responsible for managing the state of the app.
 /// Its primary task is to respond to user actions (such as button presses or text input),
@@ -124,12 +134,6 @@ class AppStateNotifier extends AppStateNotifierInterface {
     saveState();
   }
 }
-
-/// This provider allows widgets to access and modify the app state through the AppStateNotifier.
-// Notifier listens to changes in AppState and notifies any widgets that are subscribed to it.
-final appStateProvider = NotifierProvider<AppStateNotifierInterface, AppState>(
-  () => AppStateNotifier(),
-); // Tells Riverpod: "When a provider is needed, create an AppStateNotifier."
 
 // Derived providers
 final todosProvider = Provider<List<Todo>>((ref) {

@@ -13,7 +13,7 @@ part of 'todo.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$Todo implements DiagnosticableTreeMixin {
+mixin _$Todo {
 
  String get id; String get text; bool get isCompleted;
 /// Create a copy of Todo
@@ -25,12 +25,6 @@ $TodoCopyWith<Todo> get copyWith => _$TodoCopyWithImpl<Todo>(this as Todo, _$ide
   /// Serializes this Todo to a JSON map.
   Map<String, dynamic> toJson();
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'Todo'))
-    ..add(DiagnosticsProperty('id', id))..add(DiagnosticsProperty('text', text))..add(DiagnosticsProperty('isCompleted', isCompleted));
-}
 
 @override
 bool operator ==(Object other) {
@@ -42,7 +36,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,id,text,isCompleted);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'Todo(id: $id, text: $text, isCompleted: $isCompleted)';
 }
 
@@ -216,13 +210,13 @@ return $default(_that.id,_that.text,_that.isCompleted);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _Todo with DiagnosticableTreeMixin implements Todo {
-   _Todo({required this.id, required this.text, required this.isCompleted});
+class _Todo implements Todo {
+   _Todo({required this.id, required this.text, this.isCompleted = false});
   factory _Todo.fromJson(Map<String, dynamic> json) => _$TodoFromJson(json);
 
 @override final  String id;
 @override final  String text;
-@override final  bool isCompleted;
+@override@JsonKey() final  bool isCompleted;
 
 /// Create a copy of Todo
 /// with the given fields replaced by the non-null parameter values.
@@ -233,12 +227,6 @@ _$TodoCopyWith<_Todo> get copyWith => __$TodoCopyWithImpl<_Todo>(this, _$identit
 @override
 Map<String, dynamic> toJson() {
   return _$TodoToJson(this, );
-}
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'Todo'))
-    ..add(DiagnosticsProperty('id', id))..add(DiagnosticsProperty('text', text))..add(DiagnosticsProperty('isCompleted', isCompleted));
 }
 
 @override
@@ -251,7 +239,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,id,text,isCompleted);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'Todo(id: $id, text: $text, isCompleted: $isCompleted)';
 }
 

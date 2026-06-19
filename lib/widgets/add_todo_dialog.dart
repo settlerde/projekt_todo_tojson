@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:projekt_todo_tojson/providers/app_state_provider.dart';
+import 'package:projekt_todo_tojson/providers/main_providers.dart';
 
 /// An overlay dialog component used to capture user input for generating new tasks.
 ///
@@ -24,10 +24,7 @@ class AddTodoDialog extends ConsumerWidget {
         autofocus: true,
         // UX Enhancement: Sets keyboard configuration to sentence-case capitalization layout.
         textCapitalization: TextCapitalization.sentences,
-        decoration: const InputDecoration(
-          hintText: 'What to do?',
-          border: OutlineInputBorder(),
-        ),
+        decoration: const InputDecoration(hintText: 'What to do?', border: OutlineInputBorder()),
         // Trigger submission workflow directly from the hardware/virtual keyboard "Done/Enter" action.
         onSubmitted: (value) {
           _submitData(context, ref, textController.text);
@@ -62,7 +59,7 @@ class AddTodoDialog extends ConsumerWidget {
     if (text.trim().isEmpty) return;
 
     // Dispatch action to update the immutable state tree with the newly initialized object.
-    ref.read(appStateProvider.notifier).addTodo(text);
+    ref.read(appStateNotifierProvider).addTodo(text);
 
     // Pop the current route off the navigator stack to return user focus back to the primary view.
     Navigator.of(context).pop();

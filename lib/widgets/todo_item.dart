@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:projekt_todo_tojson/models/todo.dart';
-import 'package:projekt_todo_tojson/providers/app_state_provider.dart';
+import 'package:projekt_todo_tojson/providers/main_providers.dart';
 
 class TodoItem extends ConsumerWidget {
   final Todo todo;
@@ -20,14 +20,14 @@ class TodoItem extends ConsumerWidget {
       selectedTileColor: colorScheme.primaryContainer.withAlpha(80),
 
       onLongPress: () {
-        ref.read(appStateProvider.notifier).toggleSelection(todo.id);
+        ref.read(appStateNotifierProvider).toggleSelection(todo.id);
       },
       // Task status interaction layer.
       leading: Checkbox(
         value: todo.isCompleted,
         onChanged: (bool? checked) {
           // Dispatch event to mutate the task completion state via the notifier.
-          ref.read(appStateProvider.notifier).toggleTodo(todo.id);
+          ref.read(appStateNotifierProvider).toggleTodo(todo.id);
         },
       ),
 
@@ -36,17 +36,13 @@ class TodoItem extends ConsumerWidget {
         todo.text,
         style: TextStyle(
           // Apply a line-through decoration to visually represent completed tasks.
-          decoration: todo.isCompleted
-              ? TextDecoration.lineThrough
-              : TextDecoration.none,
+          decoration: todo.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
           // Dim the text color for completed tasks to shift user focus to active items.
           color: todo.isCompleted ? Colors.grey : colorScheme.onSurface,
         ),
       ),
       // UI Presentation Layer: Dynamically injects an explicit validation indicator.
-      trailing: isSelected
-          ? Icon(Icons.check_circle, color: colorScheme.primary)
-          : null,
+      trailing: isSelected ? Icon(Icons.check_circle, color: colorScheme.primary) : null,
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:projekt_todo_tojson/providers/app_state_provider.dart';
+import 'package:projekt_todo_tojson/providers/main_providers.dart';
 import 'package:projekt_todo_tojson/widgets/add_todo_dialog.dart';
 import 'package:projekt_todo_tojson/screens/settings_screen.dart';
 import 'package:projekt_todo_tojson/widgets/todo_item.dart';
@@ -32,9 +32,7 @@ class TodoListScreen extends ConsumerWidget {
               onPressed: () {
                 // Check the user's preference: should we ask for confirmation
                 // before deleting, or just delete immediately?
-                final asksConfirmation = ref
-                    .read(appStateProvider)
-                    .asksForDeletionConfirmation;
+                final asksConfirmation = ref.read(appStateProvider).asksForDeletionConfirmation;
 
                 if (asksConfirmation) {
                   // Show a confirmation dialog before performing the deletion.
@@ -42,21 +40,14 @@ class TodoListScreen extends ConsumerWidget {
                     context: context,
                     builder: (_) => AlertDialog(
                       title: const Text('Confirm Deletion'),
-                      content: const Text(
-                        'Are you sure you want to delete the selected items?',
-                      ),
+                      content: const Text('Are you sure you want to delete the selected items?'),
                       actions: [
                         // Cancel button — closes the dialog, nothing happens.
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
-                        ),
+                        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
                         // Delete button — performs the actual deletion via the notifier.
                         TextButton(
                           onPressed: () {
-                            ref
-                                .read(appStateProvider.notifier)
-                                .deleteSelectedTodos();
+                            ref.read(appStateNotifierProvider).deleteSelectedTodos();
                             Navigator.of(context).pop();
                           },
                           child: const Text('Delete'),
@@ -66,7 +57,7 @@ class TodoListScreen extends ConsumerWidget {
                   );
                 } else {
                   // Confirmation disabled in settings — delete right away
-                  ref.read(appStateProvider.notifier).deleteSelectedTodos();
+                  ref.read(appStateNotifierProvider).deleteSelectedTodos();
                 }
               },
             ),
@@ -76,9 +67,7 @@ class TodoListScreen extends ConsumerWidget {
             tooltip: 'Open Settings',
             onPressed: () {
               // Push the SettingsScreen onto the global application routing stack.
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SettingsScreen()));
             },
           ),
         ],

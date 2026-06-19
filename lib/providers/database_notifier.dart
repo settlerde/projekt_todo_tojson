@@ -19,9 +19,7 @@ class DatabaseNotifier extends AppStateNotifierInterface {
   Future<void> loadState() async {
     final todos = await _databaseService.getAllTodos();
     final isDarkModeStr = await _databaseService.getSetting('isDarkMode');
-    final asksConfirmation = await _databaseService.getSetting(
-      'asksForDeletionConfirmation',
-    );
+    final asksConfirmation = await _databaseService.getSetting('asksForDeletionConfirmation');
 
     // Map database values into the application state.
     state = state.copyWith(
@@ -41,11 +39,7 @@ class DatabaseNotifier extends AppStateNotifierInterface {
   void addTodo(String text) {
     if (text.trim().isEmpty) return;
 
-    final newTodo = Todo(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      text: text.trim(),
-      isCompleted: false,
-    );
+    final newTodo = Todo(id: DateTime.now().millisecondsSinceEpoch.toString(), text: text.trim(), isCompleted: false);
 
     state = state.copyWith(todos: [...state.todos, newTodo]);
     _databaseService.insertTodo(newTodo);
@@ -82,10 +76,7 @@ class DatabaseNotifier extends AppStateNotifierInterface {
   void toggleDeletionConfirmation() {
     final newConfirmation = !state.asksForDeletionConfirmation;
     state = state.copyWith(asksForDeletionConfirmation: newConfirmation);
-    _databaseService.saveSetting(
-      'asksForDeletionConfirmation',
-      newConfirmation ? '1' : '0',
-    );
+    _databaseService.saveSetting('asksForDeletionConfirmation', newConfirmation ? '1' : '0');
   }
 
   // --- SELECTION & BULK OPERATIONS ---
@@ -115,9 +106,7 @@ class DatabaseNotifier extends AppStateNotifierInterface {
     if (selectedIds.isEmpty) return;
 
     // 1. Locally filter out the items marked for deletion.
-    final remainingTodos = state.todos
-        .where((todo) => !selectedIds.contains(todo.id))
-        .toList();
+    final remainingTodos = state.todos.where((todo) => !selectedIds.contains(todo.id)).toList();
 
     state = state.copyWith(
       todos: remainingTodos,
@@ -129,4 +118,9 @@ class DatabaseNotifier extends AppStateNotifierInterface {
       await _databaseService.deleteTodo(id);
     }
   }
+
+  // @override
+  // void toggleIsSqLite() {
+  //   state = state.copyWith(isSqLite: !state.isSqLite);
+  // }
 }

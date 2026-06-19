@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:projekt_todo_tojson/providers/app_state_provider.dart';
+import 'package:projekt_todo_tojson/providers/main_providers.dart';
 
 /// A configuration interface that exposes global application preferences.
 ///
@@ -17,12 +17,10 @@ class SettingsScreen extends ConsumerWidget {
       // [select] says: "watch only for [isDarkMode]; the other changes don't concern me"
       appStateProvider.select((state) => state.isDarkMode),
     );
-    final asksForConfirmation = ref.watch(
-      appStateProvider.select((state) => state.asksForDeletionConfirmation),
-    );
+    final asksForConfirmation = ref.watch(appStateProvider.select((state) => state.asksForDeletionConfirmation));
 
     // Obtain the command channel notifier to commit preference adjustments.
-    final stateNotifier = ref.read(appStateProvider.notifier);
+    final stateNotifier = ref.read(appStateNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -31,8 +29,7 @@ class SettingsScreen extends ConsumerWidget {
         // if this route is pushed onto the global Navigator framework stack.
       ),
       body: ListView(
-        physics:
-            const ClampingScrollPhysics(), // Prevents unnecessary bouncing animations on small lists
+        physics: const ClampingScrollPhysics(), // Prevents unnecessary bouncing animations on small lists
         children: [
           // Theme configuration sector.
           SwitchListTile(
@@ -47,14 +44,22 @@ class SettingsScreen extends ConsumerWidget {
               stateNotifier.toggleDarkMode();
             },
           ),
+          const Divider(height: 1),
+          SwitchListTile(
+            title: const Text('is Sqlite'),
+            subtitle: const Text('Toggle between using SQLite or in-memory storage for tasks'),
+            secondary: Icon(isDarkMode ? Icons.storage : Icons.memory),
+            value: ref.watch(isSqLiteProvider),
+            onChanged: (bool value) {
+              ref.read(isSqLiteProvider.notifier).state = value;
+            },
+          ),
 
           const Divider(height: 1), // Standard visual boundary segment
           // User Experience guardrail configuration sector.
           SwitchListTile(
             title: const Text('Confirm Deletion'),
-            subtitle: const Text(
-              'Require confirmation dialog before executing batch item deletes',
-            ),
+            subtitle: const Text('Require confirmation dialog before executing batch item deletes'),
             secondary: const Icon(Icons.playlist_remove),
             value: asksForConfirmation,
             onChanged: (bool value) {
